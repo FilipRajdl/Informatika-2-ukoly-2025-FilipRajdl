@@ -8,11 +8,24 @@ class Storage:
 
     def save_products(self, products: List[Product]):
         """Uloží seznam produktů do JSON souboru."""
+        data = [p.to_dict() for p in products]
+
+        with open(self.filename, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
         # TODO: Převést produkty na dicty a uložit
-        pass
+
 
     def load_products(self) -> List[Product]:
         """Načte produkty z JSON souboru."""
+        try:
+            with open(self.filename, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            return [Product.from_dict(item) for item in data]
+        
+        except FileNotFoundError:
+            return []
+        except json.JSONDecodeError:
+            print(f"Chyba: Soubor {self.filename} je poškozený nebo prázdný.")
         # TODO: Načíst soubor, ošetřit FileNotFoundError/JSONDecodeError
         # TODO: Vrátit seznam instancí Product
         return []
